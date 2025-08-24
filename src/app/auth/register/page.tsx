@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import Link from 'next/link';
 
 export default function Register() {
@@ -12,6 +14,26 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { user } = useAuth();
+  const { userData, loading: userLoading } = useUser();
+
+  useEffect(() => {
+    if (user && !userLoading && userData) {
+      if (userData.type === 'admin') {
+        router.push('/dashboard');
+      } else {
+        router.push('/profile');
+      }
+    }
+  }, [user, userData, userLoading, router]);
+
+  if (user && userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +61,8 @@ export default function Register() {
       setLoading(false);
     }
   };
+
+  if (user) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">

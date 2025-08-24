@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddSongs from '@/components/dashboard/AddSongs';
 import ViewSongs from '@/components/dashboard/ViewSongs';
+import SongDetails from '@/components/dashboard/SongDetails';
 import { BarChart3, Plus, Music } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -14,6 +15,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [songCount, setSongCount] = useState(0);
+  const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 
   const fetchSongCount = async () => {
     if (!user) return;
@@ -118,7 +120,10 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'add-songs' && <AddSongs onSongAdded={() => setActiveTab('view-songs')} />}
-          {activeTab === 'view-songs' && <ViewSongs />}
+          {activeTab === 'view-songs' && !selectedSongId && <ViewSongs onViewSong={setSelectedSongId} />}
+          {activeTab === 'view-songs' && selectedSongId && (
+            <SongDetails songId={selectedSongId} onBack={() => setSelectedSongId(null)} />
+          )}
         </div>
       </main>
     </div>

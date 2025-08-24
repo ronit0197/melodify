@@ -18,7 +18,11 @@ interface Song {
   created_at: any;
 }
 
-export default function ViewSongs() {
+interface ViewSongsProps {
+  onViewSong: (songId: string) => void;
+}
+
+export default function ViewSongs({ onViewSong }: ViewSongsProps) {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -164,9 +168,9 @@ export default function ViewSongs() {
       {songs.length === 0 ? (
         <div className="text-center text-gray-400">No songs found. Add some songs first!</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full bg-gray-800 rounded-lg overflow-hidden">
-            <thead className="bg-gray-700">
+        <div className="h-170 overflow-auto bg-gray-800 rounded-lg">
+          <table className="w-full">
+            <thead className="bg-gray-700 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left">Song</th>
                 <th className="px-4 py-3 text-left">Artist</th>
@@ -193,17 +197,13 @@ export default function ViewSongs() {
                       >
                         {currentlyPlaying === song.id ? <Pause size={16} /> : <Play size={16} />}
                       </button>
-                      {song.album_link && (
-                        <a
-                          href={"/dashboard/song/" + song.id}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-indigo-400 hover:text-indigo-300 p-1 rounded"
-                          title="View Album"
-                        >
-                          <Disc size={16} />
-                        </a>
-                      )}
+                      <button
+                        onClick={() => onViewSong(song.id)}
+                        className="text-indigo-400 hover:text-indigo-300 p-1 rounded"
+                        title="View Song Details"
+                      >
+                        <Disc size={16} />
+                      </button>
                       <button
                         onClick={() => deleteSong(song.id)}
                         className="text-red-400 hover:text-red-300 p-1 rounded"
