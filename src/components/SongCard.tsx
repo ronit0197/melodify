@@ -1,6 +1,7 @@
 'use client';
 
 import { Song } from '@/contexts/SongContext';
+import { usePlayer } from '@/contexts/PlayerContext';
 import { Play, Music } from 'lucide-react';
 
 interface SongCardProps {
@@ -8,7 +9,12 @@ interface SongCardProps {
 }
 
 export default function SongCard({ song }: SongCardProps) {
+  const { playSong } = usePlayer();
   const artists = song.artist.split(',').map(artist => artist.trim());
+  
+  const handlePlay = () => {
+    playSong(song);
+  };
 
   return (
     <div className="group bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 hover:bg-gray-700/50 transition-all duration-300 border border-gray-700/50 hover:border-indigo-500/50">
@@ -24,7 +30,10 @@ export default function SongCard({ song }: SongCardProps) {
             <Music className="w-12 h-12 text-white/70" />
           )}
         </div>
-        <button className="absolute bottom-2 right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+        <button 
+          onClick={handlePlay}
+          className="absolute bottom-2 right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+        >
           <Play className="w-4 h-4 ml-0.5" />
         </button>
       </div>

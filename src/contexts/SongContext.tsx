@@ -13,6 +13,7 @@ export interface Song {
   genre: string;
   artist: string;
   song_link: string;
+  duration?: string;
   created_at: any;
   created_by: string;
 }

@@ -15,7 +15,7 @@ export default function Home() {
     return <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">Loading...</div>;
   }
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-20">
       {!user && (
         <div className="max-w-6xl mx-auto px-4 py-16 mt-15">
           <div className="text-center">

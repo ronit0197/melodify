@@ -1,12 +1,15 @@
 'use client';
 
 import { useSongs } from '@/contexts/SongContext';
+import { usePlayer } from '@/contexts/PlayerContext';
 import { useParams } from 'next/navigation';
-import { Play, Clock, Music } from 'lucide-react';
+import { Play, Music } from 'lucide-react';
+import SongDuration from '@/components/SongDuration';
 
 export default function AlbumPage() {
   const { name } = useParams();
   const { songs, loading } = useSongs();
+  const { setQueue, playSong } = usePlayer();
   
   const albumName = decodeURIComponent(name as string);
   const albumSongs = songs.filter(song => song.album === albumName);
@@ -19,7 +22,7 @@ export default function AlbumPage() {
   console.log(albumSongs)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white mt-15">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white mt-15 pb-20">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-end gap-6 mb-8">
           <div className="w-48 h-48 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
@@ -33,7 +36,13 @@ export default function AlbumPage() {
         </div>
 
         <div className="mb-6 mt-20">
-          <button className="bg-green-500 hover:bg-green-400 text-black px-8 py-3 rounded-full font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => {
+              setQueue(albumSongs);
+              playSong(albumSongs[0], albumSongs);
+            }}
+            className="bg-green-500 hover:bg-green-400 text-black px-8 py-3 rounded-full font-semibold flex items-center gap-2"
+          >
             <Play className="w-5 h-5" />
             Play
           </button>
@@ -41,14 +50,18 @@ export default function AlbumPage() {
 
         <div className="space-y-2">
           {albumSongs.map((song, index) => (
-            <div key={song.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800/50 group">
+            <div 
+              key={song.id} 
+              onClick={() => playSong(song, albumSongs)}
+              className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800/50 group cursor-pointer"
+            >
               <span className="text-gray-400 w-6 text-center">{index + 1}</span>
               <div className="flex-1">
                 <h3 className="text-white font-medium">{song.song_name}</h3>
                 <p className="text-gray-400 text-sm">{song.artist}</p>
               </div>
               <span className="text-gray-400 text-sm">{song.genre}</span>
-              <Clock className="w-4 h-4 text-gray-400" />
+              <SongDuration songUrl={song.song_link} />
             </div>
           ))}
         </div>
