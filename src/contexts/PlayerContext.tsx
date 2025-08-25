@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useRef, useEffect } from 'react';
 import { Song } from './SongContext';
+import { addToRecentlyPlayed } from '@/utils/recentlyPlayed';
 
 interface PlayerContextType {
   currentSong: Song | null;
@@ -16,6 +17,9 @@ interface PlayerContextType {
   nextSong: () => void;
   prevSong: () => void;
   setQueue: (songs: Song[], startIndex?: number) => void;
+  addToQueue: (song: Song) => void;
+  removeFromQueue: (index: number) => void;
+  clearQueue: () => void;
   seekTo: (time: number) => void;
   setVolume: (volume: number) => void;
 }
@@ -33,6 +37,9 @@ const PlayerContext = createContext<PlayerContextType>({
   nextSong: () => {},
   prevSong: () => {},
   setQueue: () => {},
+  addToQueue: () => {},
+  removeFromQueue: () => {},
+  clearQueue: () => {},
   seekTo: () => {},
   setVolume: () => {},
 });
@@ -104,9 +111,19 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
 
   const playSong = (song: Song, newQueue?: Song[]) => {
     setCurrentSong(song);
+    addToRecentlyPlayed(song.id);
     if (newQueue) {
       setQueueState(newQueue);
       setCurrentIndex(newQueue.findIndex(s => s.id === song.id));
+    } else {
+      // If no queue provided, add song to current queue or create new queue
+      const existingIndex = queue.findIndex(s => s.id === song.id);
+      if (existingIndex >= 0) {
+        setCurrentIndex(existingIndex);
+      } else {
+        setQueueState(prev => [...prev, song]);
+        setCurrentIndex(queue.length);
+      }
     }
     setIsPlaying(true);
   };
@@ -157,6 +174,29 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addToQueue = (song: Song) => {
+    setQueueState(prev => [...prev, song]);
+  };
+
+  const removeFromQueue = (index: number) => {
+    setQueueState(prev => prev.filter((_, i) => i !== index));
+    if (index < currentIndex) {
+      setCurrentIndex(prev => prev - 1);
+    } else if (index === currentIndex && queue.length > 1) {
+      const newQueue = queue.filter((_, i) => i !== index);
+      if (newQueue.length > 0) {
+        const newIndex = Math.min(currentIndex, newQueue.length - 1);
+        setCurrentIndex(newIndex);
+        setCurrentSong(newQueue[newIndex]);
+      }
+    }
+  };
+
+  const clearQueue = () => {
+    setQueueState([]);
+    setCurrentIndex(0);
+  };
+
   return (
     <PlayerContext.Provider value={{
       currentSong,
@@ -171,6 +211,9 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       nextSong,
       prevSong,
       setQueue,
+      addToQueue,
+      removeFromQueue,
+      clearQueue,
       seekTo,
       setVolume,
     }}>

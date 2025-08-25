@@ -3,13 +3,13 @@
 import { useSongs } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { useParams } from 'next/navigation';
-import { Play, Music } from 'lucide-react';
+import { Play, Music, Plus } from 'lucide-react';
 import SongDuration from '@/components/SongDuration';
 
 export default function AlbumPage() {
   const { name } = useParams();
   const { songs, loading } = useSongs();
-  const { setQueue, playSong } = usePlayer();
+  const { setQueue, playSong, addToQueue } = usePlayer();
   
   const albumName = decodeURIComponent(name as string);
   const albumSongs = songs.filter(song => song.album === albumName);
@@ -52,16 +52,21 @@ export default function AlbumPage() {
           {albumSongs.map((song, index) => (
             <div 
               key={song.id} 
-              onClick={() => playSong(song, albumSongs)}
-              className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800/50 group cursor-pointer"
+              className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800/50 group"
             >
               <span className="text-gray-400 w-6 text-center">{index + 1}</span>
-              <div className="flex-1">
+              <div className="flex-1 cursor-pointer" onClick={() => playSong(song, albumSongs)}>
                 <h3 className="text-white font-medium">{song.song_name}</h3>
                 <p className="text-gray-400 text-sm">{song.artist}</p>
               </div>
               <span className="text-gray-400 text-sm">{song.genre}</span>
               <SongDuration songUrl={song.song_link} />
+              <button
+                onClick={() => addToQueue(song)}
+                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white p-2"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
             </div>
           ))}
         </div>

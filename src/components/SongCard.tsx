@@ -2,18 +2,23 @@
 
 import { Song } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
-import { Play, Music } from 'lucide-react';
+import { Play, Music, Plus } from 'lucide-react';
 
 interface SongCardProps {
   song: Song;
 }
 
 export default function SongCard({ song }: SongCardProps) {
-  const { playSong } = usePlayer();
+  const { playSong, addToQueue } = usePlayer();
   const artists = song.artist.split(',').map(artist => artist.trim());
   
   const handlePlay = () => {
     playSong(song);
+  };
+
+  const handleAddToQueue = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToQueue(song);
   };
 
   return (
@@ -30,12 +35,20 @@ export default function SongCard({ song }: SongCardProps) {
             <Music className="w-12 h-12 text-white/70" />
           )}
         </div>
-        <button 
-          onClick={handlePlay}
-          className="absolute bottom-2 right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
-        >
-          <Play className="w-4 h-4 ml-0.5" />
-        </button>
+        <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <button 
+            onClick={handleAddToQueue}
+            className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-full"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          <button 
+            onClick={handlePlay}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full"
+          >
+            <Play className="w-4 h-4 ml-0.5" />
+          </button>
+        </div>
       </div>
       
       <div className="space-y-2">

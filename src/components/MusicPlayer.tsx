@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { usePlayer } from '@/contexts/PlayerContext';
-import { Play, Pause, SkipBack, SkipForward, Music, Volume2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Music, Volume2, List } from 'lucide-react';
+import QueueModal from './QueueModal';
 
 export default function MusicPlayer() {
-  const { currentSong, isPlaying, togglePlay, nextSong, prevSong, currentTime, duration, seekTo, volume, setVolume } = usePlayer();
+  const { currentSong, isPlaying, togglePlay, nextSong, prevSong, currentTime, duration, seekTo, volume, setVolume, queue } = usePlayer();
+  const [showQueue, setShowQueue] = useState(false);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -27,7 +30,7 @@ export default function MusicPlayer() {
   if (!currentSong) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-md border-t border-gray-700 p-4 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-md border-t border-gray-700 p-4 z-40">
       <div className="mx-auto">
         {/* Progress Bar */}
         <div className="mb-3">
@@ -92,6 +95,18 @@ export default function MusicPlayer() {
             >
               <SkipForward className="w-5 h-5" />
             </button>
+
+            <button
+              onClick={() => setShowQueue(true)}
+              className="text-gray-400 hover:text-white transition p-2 relative"
+            >
+              <List className="w-5 h-5" />
+              {queue.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {queue.length}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Volume Control */}
@@ -109,6 +124,7 @@ export default function MusicPlayer() {
           </div>
         </div>
       </div>
+      <QueueModal isOpen={showQueue} onClose={() => setShowQueue(false)} />
     </div>
   );
 }

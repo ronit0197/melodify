@@ -6,6 +6,7 @@ import ScrollableSection from '@/components/ScrollableSection';
 import ArtistCard from '@/components/ArtistCard';
 import AlbumCard from '@/components/AlbumCard';
 import SectionRow from '@/components/SectionRow';
+import RecentlyPlayed from '@/components/RecentlyPlayed';
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -56,6 +57,9 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Recently Played Section */}
+            <RecentlyPlayed />
+            
             {/* Artists Section */}
             <ScrollableSection title="Popular Artists">
               {(() => {
