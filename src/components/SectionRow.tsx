@@ -12,7 +12,7 @@ interface SectionRowProps {
 
 export default function SectionRow({ title, songs }: SectionRowProps) {
   const [showAll, setShowAll] = useState(false);
-  const displaySongs = showAll ? songs : songs.slice(0, 5);
+  const displaySongs = showAll ? songs : songs.slice(0, 6);
 
   return (
     <div className="mb-8">
@@ -29,7 +29,7 @@ export default function SectionRow({ title, songs }: SectionRowProps) {
         )}
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {displaySongs.map((song) => (
           <SongCard key={song.id} song={song} />
         ))}
