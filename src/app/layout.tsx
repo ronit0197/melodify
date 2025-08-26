@@ -7,6 +7,8 @@ import { SongProvider } from "@/contexts/SongContext";
 import { PlayerProvider } from "@/contexts/PlayerContext";
 import Navbar from "@/components/navbar";
 import MusicPlayer from "@/components/MusicPlayer";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,9 +39,12 @@ export default function RootLayout({
           <UserProvider>
             <SongProvider>
               <PlayerProvider>
-                <Navbar />
-                {children}
-                <MusicPlayer />
+                <FavoritesProvider>
+                  <Navbar />
+                  {children}
+                  <Toaster richColors position="bottom-right" />
+                  <MusicPlayer />
+                </FavoritesProvider>
               </PlayerProvider>
             </SongProvider>
           </UserProvider>

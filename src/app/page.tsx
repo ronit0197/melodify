@@ -7,13 +7,15 @@ import ArtistCard from '@/components/ArtistCard';
 import AlbumCard from '@/components/AlbumCard';
 import SectionRow from '@/components/SectionRow';
 import RecentlyPlayed from '@/components/RecentlyPlayed';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
+import PreLoader from '@/components/PreLoader';
 
 export default function Home() {
   const { user, loading } = useAuth();
   const { songs, loading: songsLoading } = useSongs();
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">Loading...</div>;
+    return <PreLoader />;
   }
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-20">
@@ -48,9 +50,7 @@ export default function Home() {
         </div>
 
         {songsLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-lg text-gray-400">Loading songs...</div>
-          </div>
+          <LoadingSkeleton />
         ) : songs.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-gray-400 text-lg">No songs found. Add some songs to get started!</p>
@@ -59,7 +59,7 @@ export default function Home() {
           <div className="space-y-8">
             {/* Recently Played Section */}
             <RecentlyPlayed />
-            
+
             {/* Artists Section */}
             <ScrollableSection title="Popular Artists">
               {(() => {

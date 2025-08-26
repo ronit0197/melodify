@@ -9,6 +9,7 @@ import SongDetails from '@/components/dashboard/SongDetails';
 import { BarChart3, Plus, Music } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import DashboardSkeleton from '@/components/dashboard/LoadingSkeleton';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -40,11 +41,7 @@ export default function Dashboard() {
   }, [user]);
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

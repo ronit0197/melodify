@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useRef, useEffect } from 'react';
 import { Song } from './SongContext';
 import { addToRecentlyPlayed } from '@/utils/recentlyPlayed';
+import { toast } from "sonner";
 
 interface PlayerContextType {
   currentSong: Song | null;
@@ -32,16 +33,16 @@ const PlayerContext = createContext<PlayerContextType>({
   currentTime: 0,
   duration: 0,
   volume: 1,
-  playSong: () => {},
-  togglePlay: () => {},
-  nextSong: () => {},
-  prevSong: () => {},
-  setQueue: () => {},
-  addToQueue: () => {},
-  removeFromQueue: () => {},
-  clearQueue: () => {},
-  seekTo: () => {},
-  setVolume: () => {},
+  playSong: () => { },
+  togglePlay: () => { },
+  nextSong: () => { },
+  prevSong: () => { },
+  setQueue: () => { },
+  addToQueue: () => { },
+  removeFromQueue: () => { },
+  clearQueue: () => { },
+  seekTo: () => { },
+  setVolume: () => { },
 });
 
 export const usePlayer = () => useContext(PlayerContext);
@@ -80,9 +81,9 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
           setIsPlaying(false);
         }
       };
-      
+
       audioRef.current.addEventListener('ended', handleEnded);
-      
+
       return () => {
         audioRef.current?.removeEventListener('ended', handleEnded);
       };
@@ -121,7 +122,7 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
       if (existingIndex >= 0) {
         setCurrentIndex(existingIndex);
       } else {
-        setQueueState(prev => [...prev, song]);
+        addToQueue(song, false);
         setCurrentIndex(queue.length);
       }
     }
@@ -174,9 +175,28 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const addToQueue = (song: Song) => {
-    setQueueState(prev => [...prev, song]);
+  const addToQueue = (song: Song, showToast = true) => {
+    let added = false;
+    setQueueState(prev => {
+      const exists = prev.some(s => s.id === song.id);
+      if (exists) return prev;
+      added = true;
+      return [...prev, song];
+    });
+
+    if (showToast) {
+      if (added) {
+        toast.success(`Added "${song.song_name}" to queue`, {
+          description: song.artist,
+        });
+      } else {
+        toast.warning(`"${song.song_name}" is already in the queue`);
+      }
+    }
   };
+
+
+
 
   const removeFromQueue = (index: number) => {
     setQueueState(prev => prev.filter((_, i) => i !== index));

@@ -168,7 +168,7 @@ export default function ViewSongs({ onViewSong }: ViewSongsProps) {
       {songs.length === 0 ? (
         <div className="text-center text-gray-400">No songs found. Add some songs first!</div>
       ) : (
-        <div className="h-170 overflow-auto bg-gray-800 rounded-lg">
+        <div className="h-150 overflow-auto bg-gray-800 rounded-lg">
           <table className="w-full">
             <thead className="bg-gray-700 sticky top-0">
               <tr>

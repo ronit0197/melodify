@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import Link from 'next/link';
+import PreLoader from '@/components/PreLoader';
 
 export default function Register() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -28,11 +29,7 @@ export default function Register() {
   }, [user, userData, userLoading, router]);
 
   if (user && userLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <PreLoader />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,46 +59,48 @@ export default function Register() {
     }
   };
 
-  if (user) return null;
+  if (user && (userLoading || !userData)) {
+    return <PreLoader />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
         <h2 className="text-2xl mb-6 text-center">Register</h2>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-        
+
         <input
           type="text"
           placeholder="Name"
           value={formData.name}
-          onChange={(e) => setFormData({...formData, name: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full p-3 mb-4 border rounded"
           required
         />
-        
+
         <input
           type="email"
           placeholder="Email"
           value={formData.email}
-          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="w-full p-3 mb-4 border rounded"
           required
         />
-        
+
         <input
           type="password"
           placeholder="Password"
           value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           className="w-full p-3 mb-6 border rounded"
           required
         />
-        
+
         <button
           type="submit"
           disabled={loading}
@@ -109,11 +108,11 @@ export default function Register() {
         >
           {loading ? 'Registering...' : 'Register'}
         </button>
-        
+
         <p className="text-center mt-4">
           Already have an account? <Link href="/auth/login" className="text-indigo-500">Login</Link>
         </p>
       </form>
-      </div>
+    </div>
   );
 }

@@ -18,7 +18,7 @@ export default function Profile() {
   }, [user, authLoading, router]);
 
   if (authLoading || userLoading || !user) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="text-xl">Loading...</div></div>;
+    return <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">Loading...</div>;
   }
 
   return (
