@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ArrowLeft, Play, Pause } from 'lucide-react';
+import Image from 'next/image';
 
 interface Song {
   id: string;
@@ -102,16 +103,18 @@ export default function SongDetails({ songId, onBack }: SongDetailsProps) {
 
       <div className="bg-gray-800 rounded-lg p-6">
         <h2 className="text-2xl font-bold text-white mb-6">{song.song_name}</h2>
-        
+
         <div className="flex gap-6">
           {song.album_link && (
-            <img
+            <Image
+              width={256}
+              height={256}
               src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + song.album_link}
               alt={song.album}
               className="w-48 h-48 rounded-lg object-cover"
             />
           )}
-          
+
           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
@@ -127,7 +130,7 @@ export default function SongDetails({ songId, onBack }: SongDetailsProps) {
                 <p className="text-white text-lg">{song.director || 'N/A'}</p>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="text-gray-400 text-sm">Genre</label>

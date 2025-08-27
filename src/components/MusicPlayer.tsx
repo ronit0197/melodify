@@ -61,7 +61,9 @@ export default function MusicPlayer() {
           >
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               {currentSong.album_link ? (
-                <img
+                <Image
+                  width={256}
+                  height={256}
                   src={
                     process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL +
                     currentSong.album_link
