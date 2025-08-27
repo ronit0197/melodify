@@ -16,6 +16,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [songCount, setSongCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
   const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 
   const fetchSongCount = useCallback(async () => {
@@ -28,6 +29,16 @@ export default function Dashboard() {
     }
   }, [user]);
 
+  const fetchUserCount = useCallback(async () => {
+    if (!user) return;
+    try {
+      const querySnapshot = await getDocs(collection(db, 'users'));
+      setUserCount(querySnapshot.size);
+    } catch (error) {
+      console.error('Error fetching user count:', error);
+    }
+  }, [user]);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
@@ -37,8 +48,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       fetchSongCount();
+      fetchUserCount();
     }
-  }, [user, fetchSongCount]);
+  }, [user, fetchSongCount, fetchUserCount]);
 
   if (loading || !user) {
     return <DashboardSkeleton />;
@@ -91,8 +103,8 @@ export default function Dashboard() {
                 <div className="bg-green-600 text-white p-6 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-200 text-sm">Active Users</p>
-                      <p className="text-3xl font-bold">1</p>
+                      <p className="text-green-200 text-sm">Total Users</p>
+                      <p className="text-3xl font-bold">{userCount}</p>
                     </div>
                     <BarChart3 size={32} className="text-green-200" />
                   </div>

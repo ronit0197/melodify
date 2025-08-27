@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSongs } from '@/contexts/SongContext';
 
 interface AddSongsProps {
   onSongAdded?: () => void;
@@ -22,6 +23,7 @@ export default function AddSongs({ onSongAdded }: AddSongsProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const { user } = useAuth();
+  const { fetchSongs } = useSongs();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +52,7 @@ export default function AddSongs({ onSongAdded }: AddSongsProps) {
         song_link: '',
         album_link: ''
       });
+      await fetchSongs();
       setTimeout(() => {
         onSongAdded?.();
       }, 1000);
