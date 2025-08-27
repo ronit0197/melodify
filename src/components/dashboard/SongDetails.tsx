@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ArrowLeft, Play, Pause } from 'lucide-react';
-import OptimizedImage from '../OptimizedImage';
 
 interface Song {
   id: string;
@@ -106,12 +105,10 @@ export default function SongDetails({ songId, onBack }: SongDetailsProps) {
         
         <div className="flex gap-6">
           {song.album_link && (
-            <OptimizedImage
+            <img
               src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + song.album_link}
               alt={song.album}
               className="w-48 h-48 rounded-lg object-cover"
-              width={192}
-              height={192}
             />
           )}
           
