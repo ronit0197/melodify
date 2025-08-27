@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSongs } from '@/contexts/SongContext';
+import { useSongs, Song } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { getRecentlyPlayed } from '@/utils/recentlyPlayed';
 import { Play, Music } from 'lucide-react';
@@ -9,11 +9,11 @@ import { Play, Music } from 'lucide-react';
 export default function RecentlyPlayed() {
   const { songs } = useSongs();
   const { playSong } = usePlayer();
-  const [recentSongs, setRecentSongs] = useState<any[]>([]);
+  const [recentSongs, setRecentSongs] = useState<Song[]>([]);
 
   useEffect(() => {
     const recentIds = getRecentlyPlayed();
-    const recent = recentIds.map(id => songs.find(song => song.id === id)).filter(Boolean);
+    const recent = recentIds.map(id => songs.find(song => song.id === id)).filter((song): song is Song => Boolean(song));
     setRecentSongs(recent);
   }, [songs]);
 

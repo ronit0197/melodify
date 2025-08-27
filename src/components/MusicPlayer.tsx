@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { Play, Pause, SkipBack, SkipForward, Music, Volume2, List, X } from 'lucide-react';
 import QueueModal from './QueueModal';
+import OptimizedImage from './OptimizedImage';
 
 export default function MusicPlayer() {
-  const { currentSong, isPlaying, togglePlay, nextSong, prevSong, currentTime, duration, seekTo, volume, setVolume, queue } = usePlayer();
+  const { currentSong, isPlaying, togglePlay, nextSong, prevSong, currentTime, duration, seekTo, volume, setVolume } = usePlayer();
   const [showQueue, setShowQueue] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -60,13 +61,14 @@ export default function MusicPlayer() {
           >
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               {currentSong.album_link ? (
-                <img
+                <OptimizedImage
                   src={
                     process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL +
                     currentSong.album_link
                   }
                   alt={currentSong.song_name}
                   className="w-full h-full object-cover rounded-lg"
+                  fill
                 />
               ) : (
                 <Music className="w-5 h-5 sm:w-6 sm:h-6 text-white/70" />
@@ -176,10 +178,12 @@ export default function MusicPlayer() {
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="w-64 h-64 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
               {currentSong.album_link ? (
-                <img
+                <OptimizedImage
                   src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + currentSong.album_link}
                   alt={currentSong.song_name}
                   className="w-full h-full object-cover rounded-xl"
+                  width={256}
+                  height={256}
                 />
               ) : (
                 <Music className="w-12 h-12 text-white/70" />

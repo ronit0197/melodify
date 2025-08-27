@@ -4,6 +4,7 @@ import { Song } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { Play, Music, Plus, Heart, Loader2, MoreVertical } from 'lucide-react';
+import OptimizedImage from './OptimizedImage';
 
 import { useState } from 'react';
 
@@ -51,10 +52,11 @@ export default function SongCard({ song }: SongCardProps) {
         {/* Album Art */}
         <div className="aspect-square bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
           {song.album_link ? (
-            <img
+            <OptimizedImage
               src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + song.album_link}
               alt={song.song_name}
               className="w-full h-full object-cover rounded-lg"
+              fill
             />
           ) : (
             <Music className="w-10 h-10 sm:w-12 sm:h-12 text-white/70" />

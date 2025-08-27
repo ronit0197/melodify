@@ -1,6 +1,6 @@
 'use client';
 
-import { useSongs } from '@/contexts/SongContext';
+import { useSongs, Song } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useParams } from 'next/navigation';
@@ -18,15 +18,11 @@ export default function ArtistPage() {
   const [loadingId, setLoadingId] = useState(false);
 
   const artistName = decodeURIComponent(name as string);
-  const artistSongs = songs.filter(song =>
+  const artistSongs: Song[] = songs.filter(song =>
     song.artist.split(',').map(a => a.trim()).includes(artistName)
   );
 
-  if (loading) {
-    return <PageInsideSkeleton />;
-  }
-
-  const handleFavorite = async (e: React.MouseEvent, song: any) => {
+  const handleFavorite = async (e: React.MouseEvent, song: Song) => {
     e.stopPropagation();
     setLoadingId(true);
     try {
@@ -39,6 +35,10 @@ export default function ArtistPage() {
       setLoadingId(false);
     }
   };
+
+  if (loading) {
+    return <PageInsideSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white mt-15 pb-20">

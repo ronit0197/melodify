@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +15,7 @@ interface Song {
   genre: string;
   song_link: string;
   album_link: string;
-  created_at: any;
+  created_at: { toDate?: () => Date } | null;
 }
 
 interface ViewSongsProps {
@@ -30,7 +30,7 @@ export default function ViewSongs({ onViewSong }: ViewSongsProps) {
   const { user } = useAuth();
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const fetchSongs = async () => {
+  const fetchSongs = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -41,13 +41,14 @@ export default function ViewSongs({ onViewSong }: ViewSongsProps) {
         ...doc.data()
       })) as Song[];
       setSongs(songsData);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching songs:', error);
-      setError(error.message || 'Failed to fetch songs');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch songs';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   const playSong = (songId: string, songUrl: string) => {
     if (currentlyPlaying === songId) {
@@ -68,9 +69,10 @@ export default function ViewSongs({ onViewSong }: ViewSongsProps) {
     try {
       await deleteDoc(doc(db, 'songs', id));
       setSongs(songs.filter(song => song.id !== id));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting song:', error);
-      setError(error.message || 'Failed to delete song');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete song';
+      setError(errorMessage);
     }
   };
 
@@ -78,7 +80,7 @@ export default function ViewSongs({ onViewSong }: ViewSongsProps) {
     if (user) {
       fetchSongs();
     }
-  }, [user]);
+  }, [user, fetchSongs]);
 
   if (loading) {
     return (

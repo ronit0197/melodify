@@ -9,7 +9,7 @@ interface UserData {
   name: string;
   email: string;
   type: string;
-  createdAt: any;
+  createdAt: { toDate?: () => Date } | null;
 }
 
 interface UserContextType {

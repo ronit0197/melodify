@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ArrowLeft, Play, Pause } from 'lucide-react';
+import OptimizedImage from '../OptimizedImage';
 
 interface Song {
   id: string;
@@ -14,7 +15,7 @@ interface Song {
   genre: string;
   song_link: string;
   album_link: string;
-  created_at: any;
+  created_at: { toDate?: () => Date } | null;
 }
 
 interface SongDetailsProps {
@@ -38,8 +39,9 @@ export default function SongDetails({ songId, onBack }: SongDetailsProps) {
         } else {
           setError('Song not found');
         }
-      } catch (error: any) {
-        setError(error.message || 'Failed to fetch song');
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch song';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -104,10 +106,12 @@ export default function SongDetails({ songId, onBack }: SongDetailsProps) {
         
         <div className="flex gap-6">
           {song.album_link && (
-            <img
+            <OptimizedImage
               src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + song.album_link}
               alt={song.album}
               className="w-48 h-48 rounded-lg object-cover"
+              width={192}
+              height={192}
             />
           )}
           

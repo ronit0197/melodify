@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AddSongs from '@/components/dashboard/AddSongs';
 import ViewSongs from '@/components/dashboard/ViewSongs';
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const [songCount, setSongCount] = useState(0);
   const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 
-  const fetchSongCount = async () => {
+  const fetchSongCount = useCallback(async () => {
     if (!user) return;
     try {
       const querySnapshot = await getDocs(collection(db, 'songs'));
@@ -26,7 +26,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error fetching song count:', error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,7 +38,7 @@ export default function Dashboard() {
     if (user) {
       fetchSongCount();
     }
-  }, [user]);
+  }, [user, fetchSongCount]);
 
   if (loading || !user) {
     return <DashboardSkeleton />;

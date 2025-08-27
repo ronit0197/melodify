@@ -14,7 +14,7 @@ export interface Song {
   artist: string;
   song_link: string;
   duration?: string;
-  created_at: any;
+  created_at: { toDate?: () => Date } | null;
   created_by: string;
 }
 

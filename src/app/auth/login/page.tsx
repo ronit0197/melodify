@@ -49,7 +49,7 @@ export default function Login() {
           router.push('/profile');
         }
       }
-    } catch (error: any) {
+    } catch {
       setError('Invalid email or password');
     } finally {
       setLoading(false);
@@ -99,7 +99,7 @@ export default function Login() {
         </button>
 
         <p className="text-center mt-4">
-          Don't have an account? <Link href="/auth/register" className="text-indigo-500">Register</Link>
+          Don&apos;t have an account? <Link href="/auth/register" className="text-indigo-500">Register</Link>
         </p>
       </form>
     </div>

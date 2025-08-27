@@ -53,9 +53,10 @@ export default function AddSongs({ onSongAdded }: AddSongsProps) {
       setTimeout(() => {
         onSongAdded?.();
       }, 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error adding song:', error);
-      setMessage(`Error: ${error.message || 'Failed to add song. Please try again.'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add song. Please try again.';
+      setMessage(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

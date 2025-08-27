@@ -1,51 +1,70 @@
 'use client';
 
-import { useSongs } from '@/contexts/SongContext';
+import { useSongs, Song } from '@/contexts/SongContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useParams } from 'next/navigation';
 import { Play, Music, Plus, Heart, Loader2 } from 'lucide-react';
 import SongDuration from '@/components/SongDuration';
-
-import { useState } from 'react';
 import PageInsideSkeleton from '@/components/PageInsideSkeleton';
+import Image from 'next/image';
+
+import { useState, useCallback } from 'react';
 
 export default function AlbumPage() {
   const { name } = useParams();
   const { songs, loading } = useSongs();
   const { setQueue, playSong, addToQueue } = usePlayer();
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
-  const [loadingId, setLoadingId] = useState(false);
+  const [loadingIds, setLoadingIds] = useState<string[]>([]);
 
-  const albumName = decodeURIComponent(name as string);
-  const albumSongs = songs.filter(song => song.album === albumName);
-  const director = albumSongs[0]?.director;
+  const albumName = typeof name === 'string' ? decodeURIComponent(name) : '';
+  const albumSongs: Song[] = songs.filter(song => song.album === albumName);
+  const director = albumSongs[0]?.director ?? 'Unknown';
+
+  const handleFavorite = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement>, song: Song) => {
+      e.stopPropagation();
+      setLoadingIds(prev => [...prev, song.id]);
+      try {
+        if (isFavorite(song.id)) {
+          await removeFromFavorites(song.id);
+        } else {
+          await addToFavorites(song.id);
+        }
+      } finally {
+        setLoadingIds(prev => prev.filter(id => id !== song.id));
+      }
+    },
+    [isFavorite, addToFavorites, removeFromFavorites]
+  );
+
+  const handlePlayAlbum = useCallback(() => {
+    setQueue(albumSongs);
+    playSong(albumSongs[0], albumSongs);
+  }, [albumSongs, setQueue, playSong]);
 
   if (loading) {
     return <PageInsideSkeleton />;
   }
-
-  const handleFavorite = async (e: React.MouseEvent, song: any) => {
-    e.stopPropagation();
-    setLoadingId(true);
-    try {
-      if (isFavorite(song.id)) {
-        await removeFromFavorites(song.id);
-      } else {
-        await addToFavorites(song.id);
-      }
-    } finally {
-      setLoadingId(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white mt-15 pb-20">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Album Header */}
         <div className="flex flex-row sm:items-end gap-6 mb-8">
-          <div className="w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
-            <Music className="w-16 h-16 sm:w-24 sm:h-24 text-white/70" />
+          <div className="w-32 h-32 sm:w-48 sm:h-48 rounded-lg overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-blue-600">
+            {albumSongs[0]?.album_link ? (
+              <Image
+                src={albumSongs[0].album_link}
+                alt={albumName}
+                width={192}
+                height={192}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <Music className="w-16 h-16 sm:w-24 sm:h-24 text-white/70" />
+            )}
           </div>
           <div>
             <p className="text-xs sm:text-sm text-gray-400 mb-2">Album</p>
@@ -59,10 +78,7 @@ export default function AlbumPage() {
         {/* Play Button */}
         <div className="mb-6 mt-10 sm:mt-20">
           <button
-            onClick={() => {
-              setQueue(albumSongs);
-              playSong(albumSongs[0], albumSongs);
-            }}
+            onClick={handlePlayAlbum}
             className="bg-green-500 hover:bg-green-400 text-black px-6 py-2 sm:px-8 sm:py-3 rounded-full font-semibold flex items-center gap-2 text-sm sm:text-base"
           >
             <Play className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -94,7 +110,7 @@ export default function AlbumPage() {
 
               {/* Genre */}
               <span className="hidden sm:block text-gray-400 text-sm">
-                {song.genre}
+                {song.genre ?? 'Unknown'}
               </span>
 
               {/* Duration */}
@@ -104,21 +120,17 @@ export default function AlbumPage() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={(e) => handleFavorite(e, song)}
-                  disabled={loadingId}
-                  className={`p-1 sm:p-2 
-                ${isFavorite(song.id)
-                      ? 'text-red-500 hover:text-red-400'
-                      : 'text-gray-400 hover:text-white'
-                    } 
-                sm:opacity-0 sm:group-hover:opacity-100
-              `}
+                  disabled={loadingIds.includes(song.id)}
+                  className={`p-1 sm:p-2 ${isFavorite(song.id)
+                    ? 'text-red-500 hover:text-red-400'
+                    : 'text-gray-400 hover:text-white'
+                    } sm:opacity-0 sm:group-hover:opacity-100`}
                 >
-                  {loadingId ? (
+                  {loadingIds.includes(song.id) ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <Heart
-                      className={`w-4 h-4 ${isFavorite(song.id) ? 'fill-current' : ''
-                        }`}
+                      className={`w-4 h-4 ${isFavorite(song.id) ? 'fill-current' : ''}`}
                     />
                   )}
                 </button>
