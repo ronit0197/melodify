@@ -23,31 +23,34 @@ export default function ScrollableSection({ title, children }: ScrollableSection
 
   return (
     <div className="mb-8">
+      {/* Title + Navigation */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-white">{title}</h2>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={() => scroll('left')}
-            className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition"
+            className="p-1 md:p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition"
           >
-            <ChevronLeft className="w-4 h-4 text-white" />
+            <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 text-white" />
           </button>
-          <button 
+          <button
             onClick={() => scroll('right')}
-            className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition"
+            className="p-1 md:p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition"
           >
-            <ChevronRight className="w-4 h-4 text-white" />
+            <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-white" />
           </button>
         </div>
       </div>
-      
-      <div 
+
+      {/* Scrollable Container */}
+      <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+        className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-2 md:pb-4"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {children}
       </div>
     </div>
+
   );
 }

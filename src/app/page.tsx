@@ -20,22 +20,29 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-20">
       {!user && (
-        <div className="max-w-6xl mx-auto px-4 py-16 mt-15">
+        <div className="max-w-6xl mx-auto px-4 py-16 mt-10 sm:mt-12 md:mt-16">
           <div className="text-center">
-            <h1 className="text-6xl font-bold mb-6">Welcome to Melodify</h1>
-            <p className="text-xl text-gray-300 mb-8">
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Welcome to Melodify
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 px-2">
               Discover, stream, and enjoy your favorite music
             </p>
-            <div className="flex gap-4 justify-center">
+
+            {/* Buttons */}
+            <div className="flex flex-row gap-4 justify-center">
               <Link
                 href="/auth/register"
-                className="bg-indigo-600 px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition"
+                className="bg-indigo-600 px-6 sm:px-8 py-3 rounded-full text-base sm:text-lg font-semibold hover:bg-indigo-700 transition text-center"
               >
                 Get Started
               </Link>
               <Link
                 href="/auth/login"
-                className="border border-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-black transition"
+                className="border border-white px-6 sm:px-8 py-3 rounded-full text-base sm:text-lg font-semibold hover:bg-white hover:text-black transition text-center"
               >
                 Sign In
               </Link>
@@ -43,11 +50,16 @@ export default function Home() {
           </div>
         </div>
       )}
-      <div className="mx-auto px-4 py-8 mt-15">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Good evening</h1>
-          <p className="text-gray-400">What do you want to listen to today?</p>
+      <div className={`mx-auto px-4 py-8 sm:mt-10 ${user ? 'mt-15' : 'mt-0'}`}>
+        <div className="mb-8 text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
+            Good evening
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg text-gray-400">
+            What do you want to listen to today?
+          </p>
         </div>
+
 
         {songsLoading ? (
           <LoadingSkeleton />

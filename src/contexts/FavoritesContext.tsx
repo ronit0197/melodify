@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
@@ -28,33 +28,29 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
   const { user } = useAuth();
   const router = useRouter();
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      loadFavorites();
-    } else {
+    if (!user) {
       setFavorites([]);
+      setLoading(false);
+      return;
     }
-  }, [user]);
 
-  const loadFavorites = async () => {
-    if (!user) return;
+    const docRef = doc(db, 'favorites', user.uid);
 
-    setLoading(true);
-    try {
-      const docRef = doc(db, 'favorites', user.uid);
-      const docSnap = await getDoc(docRef);
-
+    // Real-time listener 🔥
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         setFavorites(docSnap.data().songs || []);
+      } else {
+        setFavorites([]);
       }
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, [user]);
 
   const addToFavorites = async (songId: string) => {
     if (!user) {
@@ -64,19 +60,9 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
 
     try {
       const docRef = doc(db, 'favorites', user.uid);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        await updateDoc(docRef, {
-          songs: arrayUnion(songId)
-        });
-      } else {
-        await setDoc(docRef, {
-          songs: [songId]
-        });
-      }
-
-      setFavorites(prev => [...prev, songId]);
+      await updateDoc(docRef, { songs: arrayUnion(songId) }).catch(async () => {
+        await setDoc(docRef, { songs: [songId] });
+      });
     } catch (error) {
       console.error('Error adding to favorites:', error);
     }
@@ -87,11 +73,7 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
 
     try {
       const docRef = doc(db, 'favorites', user.uid);
-      await updateDoc(docRef, {
-        songs: arrayRemove(songId)
-      });
-
-      setFavorites(prev => prev.filter(id => id !== songId));
+      await updateDoc(docRef, { songs: arrayRemove(songId) });
     } catch (error) {
       console.error('Error removing from favorites:', error);
     }
@@ -100,13 +82,15 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
   const isFavorite = (songId: string) => favorites.includes(songId);
 
   return (
-    <FavoritesContext.Provider value={{
-      favorites,
-      addToFavorites,
-      removeFromFavorites,
-      isFavorite,
-      loading,
-    }}>
+    <FavoritesContext.Provider
+      value={{
+        favorites,
+        addToFavorites,
+        removeFromFavorites,
+        isFavorite,
+        loading,
+      }}
+    >
       {children}
     </FavoritesContext.Provider>
   );
