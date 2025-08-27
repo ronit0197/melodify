@@ -7,7 +7,6 @@ import { useParams } from 'next/navigation';
 import { Play, Music, Plus, Heart, Loader2 } from 'lucide-react';
 import SongDuration from '@/components/SongDuration';
 import PageInsideSkeleton from '@/components/PageInsideSkeleton';
-import Image from 'next/image';
 
 import { useState, useCallback } from 'react';
 
@@ -54,17 +53,7 @@ export default function AlbumPage() {
         {/* Album Header */}
         <div className="flex flex-row sm:items-end gap-6 mb-8">
           <div className="w-32 h-32 sm:w-48 sm:h-48 rounded-lg overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-blue-600">
-            {albumSongs[0]?.album_link ? (
-              <Image
-                src={albumSongs[0].album_link}
-                alt={albumName}
-                width={192}
-                height={192}
-                className="object-cover w-full h-full"
-              />
-            ) : (
-              <Music className="w-16 h-16 sm:w-24 sm:h-24 text-white/70" />
-            )}
+            <Music className="w-16 h-16 sm:w-24 sm:h-24 text-white/70" />
           </div>
           <div>
             <p className="text-xs sm:text-sm text-gray-400 mb-2">Album</p>

@@ -176,22 +176,21 @@ export const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addToQueue = (song: Song, showToast = true) => {
-    let added = false;
-    setQueueState(prev => {
-      const exists = prev.some(s => s.id === song.id);
-      if (exists) return prev;
-      added = true;
-      return [...prev, song];
-    });
-
-    if (showToast) {
-      if (added) {
-        toast.success(`Added "${song.song_name}" to queue`, {
-          description: song.artist,
-        });
-      } else {
+    const exists = queue.some(s => s.id === song.id);
+    
+    if (exists) {
+      if (showToast) {
         toast.warning(`"${song.song_name}" is already in the queue`);
       }
+      return;
+    }
+
+    setQueueState(prev => [...prev, song]);
+
+    if (showToast) {
+      toast.success(`Added "${song.song_name}" to queue`, {
+        description: song.artist,
+      });
     }
   };
 

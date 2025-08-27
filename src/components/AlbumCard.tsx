@@ -1,6 +1,7 @@
 'use client';
 
 import { Music } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface AlbumCardProps {
@@ -16,7 +17,9 @@ export default function AlbumCard({ album, songCount, director, album_link }: Al
       <div className="group flex-shrink-0 w-32 sm:w-40 md:w-48 p-3 sm:p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300 cursor-pointer">
         <div className="aspect-square mb-3 sm:mb-4 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center overflow-hidden">
           {album_link && album_link[0]?.album_link ? (
-            <img
+            <Image
+              width={256}
+              height={256}
               src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + album_link[0].album_link}
               alt={album_link[0].album}
               className="w-full h-full object-cover rounded-lg"

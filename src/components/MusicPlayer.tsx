@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { Play, Pause, SkipBack, SkipForward, Music, Volume2, List, X } from 'lucide-react';
 import QueueModal from './QueueModal';
+import Image from 'next/image';
 
 export default function MusicPlayer() {
   const { currentSong, isPlaying, togglePlay, nextSong, prevSong, currentTime, duration, seekTo, volume, setVolume } = usePlayer();
@@ -176,7 +177,9 @@ export default function MusicPlayer() {
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="w-64 h-64 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
               {currentSong.album_link ? (
-                <img
+                <Image
+                  width={256}
+                  height={256}
                   src={process.env.NEXT_PUBLIC_SONG_ALBUM_BASE_URL + currentSong.album_link}
                   alt={currentSong.song_name}
                   className="w-full h-full object-cover rounded-xl"
