@@ -13,6 +13,7 @@ import PreLoader from '@/components/PreLoader';
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
   const { user } = useAuth();
@@ -43,15 +44,19 @@ export default function Login() {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        if (userData.type === 'admin') {
-          router.push('/dashboard');
-        } else {
-          router.push('/profile');
-        }
+        setLoading(false);
+        setShowPreloader(true);
+        
+        setTimeout(() => {
+          if (userData.type === 'admin') {
+            router.push('/dashboard');
+          } else {
+            router.push('/profile');
+          }
+        }, 2000);
       }
     } catch {
       setError('Invalid email or password');
-    } finally {
       setLoading(false);
     }
   };
@@ -60,6 +65,9 @@ export default function Login() {
     return <PreLoader />;
   }
 
+  if (showPreloader) {
+    return <PreLoader />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
